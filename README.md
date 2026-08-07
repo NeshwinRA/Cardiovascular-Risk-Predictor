@@ -181,7 +181,7 @@ This project helped in understanding:
 
 ## 👩‍💻 Author
 
-**Ashwini**
+**NESHWIN R A**
 
 **B.Tech Information Technology**
 
