@@ -1,0 +1,6 @@
+{
+    "selected_model": "Logistic Regression",
+    "best_auc": 0.633804487283156,
+    "logistic_regression_auc": 0.633804487283156,
+    "random_forest_auc": 0.6270228892410864
+}

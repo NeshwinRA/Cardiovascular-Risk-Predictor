@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Health Recommendations</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+    <div class="page-shell">
+        <header class="topbar">
+            <div class="topbar-inner">
+                <div class="brand">
+                    <span class="brand-mark">✦</span>
+                    <div>
+                        <p class="eyebrow">Health guidance</p>
+                        <h1>Cardio Wellness Plan</h1>
+                    </div>
+                </div>
+                <div class="topbar-actions">
+                    <a href="{{ url_for('home') }}" class="pill-link">New assessment</a>
+                </div>
+            </div>
+        </header>
+
+        <main class="container">
+            <section class="hero-card card hero-dark">
+                <div>
+                    <span class="section-label section-label-red">Risk summary</span>
+                    <h2>{{ risk_level }}</h2>
+                    <p>{{ risk_percentage }}% estimated 10-year cardiovascular risk.</p>
+                </div>
+                <div class="hero-chips">
+                    {% for flag in flags %}
+                        <span class="status-chip status-chip-red">{{ flag }}</span>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <section class="recommendation-grid">
+                <article class="recommendation-card card">
+                    <h3>Actionable recommendations</h3>
+                    <ul class="card-list">
+                        {% for recommendation in recommendations %}
+                            <li>{{ recommendation }}</li>
+                        {% endfor %}
+                    </ul>
+                </article>
+
+                <article class="recommendation-card card">
+                    <h3>Condition insights</h3>
+                    <ul class="card-list">
+                        {% for condition in associations %}
+                            <li>
+                                <strong>{{ condition }}:</strong>
+                                {% if condition == 'Hypertension' %}
+                                    Control blood pressure through lifestyle and medication as directed.
+                                {% elif condition == 'Atherosclerosis' %}
+                                    Support healthy arteries with a low-sodium, low-saturated-fat diet.
+                                {% elif condition == 'Diabetic Heart Disease' %}
+                                    Manage glucose levels and keep consistent cardiovascular monitoring.
+                                {% elif condition == 'Coronary Heart Disease' %}
+                                    Prioritize cardiac evaluation, smoking cessation, and stress reduction.
+                                {% else %}
+                                    Follow medical advice and maintain healthy living habits.
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </article>
+            </section>
+
+            <section class="support-card card">
+                <div>
+                    <h3>Long-term care plan</h3>
+                    <p>Maintain heart health with structured lifestyle changes and regular medical review.</p>
+                </div>
+                <ol class="timeline-list">
+                    <li>Schedule annual cardiovascular check-ups.</li>
+                    <li>Build a routine of moderate exercise most days.</li>
+                    <li>Adopt whole foods and reduce processed sugars.</li>
+                    <li>Monitor blood pressure and glucose frequently.</li>
+                </ol>
+            </section>
+
+            <div class="action-row page-actions">
+                <a href="{{ url_for('home') }}" class="secondary-btn">Start new assessment</a>
+            </div>
+
+            <footer class="page-footer">
+                <p>This is an AI-generated cardiovascular risk assessment and not a final medical diagnosis. Please consult a licensed doctor for professional medical evaluation.</p>
+            </footer>
+        </main>
+    </div>
+</body>
+</html>

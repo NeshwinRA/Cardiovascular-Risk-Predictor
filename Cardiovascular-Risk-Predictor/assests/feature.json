@@ -1,0 +1,109 @@
+{
+  "project": "Cardiovascular Risk Prediction System",
+  "stack": {
+    "backend": "Python + Flask",
+    "frontend": "HTML / CSS / JavaScript (plain)",
+    "ml_models": ["Logistic Regression", "Random Forest"],
+    "xai": "Simple rule-based",
+    "database": "None",
+    "model_storage": "/models folder"
+  },
+  "phases": [
+    {
+      "id": "P1",
+      "title": "Project Setup",
+      "status": "completed",
+      "steps": [
+        { "id": "P1-S1", "title": "Create project folder structure", "status": "completed", "details": "Create folders: /models, /static, /templates, /data. Place framingham.csv inside /data." },
+        { "id": "P1-S2", "title": "Create requirements.txt", "status": "completed", "details": "Include: flask, pandas, numpy, scikit-learn, imbalanced-learn, matplotlib, joblib" },
+        { "id": "P1-S3", "title": "Set up Python virtual environment", "status": "completed", "details": "Run: python -m venv venv and activate it. Install all packages from requirements.txt." },
+        { "id": "P1-S4", "title": "Verify CSV file is accessible", "status": "completed", "details": "Confirm framingham.csv is inside /data and readable with pandas." }
+      ]
+    },
+    {
+      "id": "P2",
+      "title": "Data Preprocessing (train.py)",
+      "status": "completed",
+      "steps": [
+        { "id": "P2-S1", "title": "Load framingham.csv", "status": "completed", "details": "Use pandas to load the CSV. Print shape and first 5 rows to verify." },
+        { "id": "P2-S2", "title": "Handle missing values", "status": "completed", "details": "Fill missing values using mean imputation for numerical columns (glucose, BMI, heartRate, cigsPerDay, BPMeds, totChol, education)." },
+        { "id": "P2-S3", "title": "Define features (X) and target (y)", "status": "completed", "details": "X = all columns except TenYearCHD. y = TenYearCHD column." },
+        { "id": "P2-S4", "title": "Handle class imbalance", "status": "completed", "details": "Apply SMOTE from imbalanced-learn on the training set only to balance the positive and negative CHD cases." },
+        { "id": "P2-S5", "title": "Scale features using StandardScaler", "status": "completed", "details": "Fit StandardScaler on training data only. Transform both train and test sets. Save scaler as /models/scaler.pkl using joblib." },
+        { "id": "P2-S6", "title": "Split data 80/20", "status": "completed", "details": "Use train_test_split with test_size=0.2 and random_state=42. Apply SMOTE after splitting, on training data only." }
+      ]
+    },
+    {
+      "id": "P3",
+      "title": "Model Training & Evaluation (train.py)",
+      "status": "completed",
+      "steps": [
+        { "id": "P3-S1", "title": "Train Logistic Regression model", "status": "completed", "details": "Use sklearn LogisticRegression with max_iter=1000. Fit on SMOTE-balanced training data." },
+        { "id": "P3-S2", "title": "Train Random Forest model", "status": "completed", "details": "Use sklearn RandomForestClassifier with n_estimators=100, random_state=42. Fit on SMOTE-balanced training data." },
+        { "id": "P3-S3", "title": "Evaluate both models on test set", "status": "completed", "details": "Print Accuracy, Precision, Recall, F1-Score, and ROC-AUC for both models. Use classification_report and roc_auc_score." },
+        { "id": "P3-S4", "title": "Select best model", "status": "completed", "details": "Compare ROC-AUC scores. Save the better-performing model as /models/best_model.pkl. Also save a metadata file /models/model_info.json indicating which model was selected and its scores." },
+        { "id": "P3-S5", "title": "Save scaler and model using joblib", "status": "completed", "details": "joblib.dump(scaler, 'models/scaler.pkl') and joblib.dump(best_model, 'models/best_model.pkl')." }
+      ]
+    },
+    {
+      "id": "P4",
+      "title": "Flask Backend (app.py)",
+      "status": "completed",
+      "steps": [
+        { "id": "P4-S1", "title": "Create app.py and initialize Flask", "status": "completed", "details": "Import Flask, joblib, numpy, pandas, json. Load best_model.pkl and scaler.pkl at app startup." },
+        { "id": "P4-S2", "title": "Create route: GET / (home/input page)", "status": "completed", "details": "Renders templates/index.html — the patient data entry form." },
+        { "id": "P4-S3", "title": "Create route: POST /predict", "status": "completed", "details": "Receives form data from index.html. Validates all fields (no empty, correct ranges). Scales input using loaded scaler. Runs model.predict() and model.predict_proba(). Returns result to templates/result.html." },
+        { "id": "P4-S4", "title": "Create route: GET /recommendations", "status": "completed", "details": "Renders templates/recommendations.html with context: risk percentage, associated conditions, rule-based XAI factors, health tips. Data passed via Flask session or query parameters." },
+        { "id": "P4-S5", "title": "Input validation logic", "status": "completed", "details": "Check: age (20-80), sysBP (80-250), diaBP (50-150), totChol (100-400), BMI (10-60), glucose (50-400), heartRate (40-150). Return error message to form if invalid." },
+        { "id": "P4-S6", "title": "Rule-based XAI logic", "status": "completed", "details": "After prediction, evaluate each risk factor: if totChol > 240 flag 'High Cholesterol', if sysBP > 140 flag 'High Blood Pressure', if BMI > 30 flag 'Obesity', if glucose > 126 flag 'High Glucose', if currentSmoker == 1 flag 'Active Smoker', if diabetes == 1 flag 'Diabetes'. Return list of flagged factors." },
+        { "id": "P4-S7", "title": "Disease association logic", "status": "completed", "details": "Based on flagged XAI factors, map to possible conditions: High BP → Hypertension, High Cholesterol → Atherosclerosis, High Glucose + Diabetes → Diabetic Heart Disease, Smoking → Coronary Heart Disease. Return as list." }
+      ]
+    },
+    {
+      "id": "P5",
+      "title": "Frontend - Input Page (index.html)",
+      "status": "completed",
+      "steps": [
+        { "id": "P5-S1", "title": "Create templates/index.html", "status": "completed", "details": "A clean, professional medical form. Fields: Age, Sex, Education, Current Smoker, Cigs Per Day, BP Meds, Prevalent Stroke, Prevalent Hyp, Diabetes, Total Cholesterol, Sys BP, Dia BP, BMI, Heart Rate, Glucose." },
+        { "id": "P5-S2", "title": "Create static/css/style.css", "status": "completed", "details": "Style the form with a medical/health theme. Use a white card layout, blue/teal accent colors. Add proper spacing, labels, and input validation highlights." },
+        { "id": "P5-S3", "title": "Add client-side validation (JS)", "status": "completed", "details": "Create static/js/main.js. Before form submit, validate all fields are filled and within range. Show inline error messages without page reload." },
+        { "id": "P5-S4", "title": "Show loading spinner on predict click", "status": "completed", "details": "On Predict button click, show a spinner or loading indicator while the POST /predict request is being processed." }
+      ]
+    },
+    {
+      "id": "P6",
+      "title": "Frontend - Result Page (result.html)",
+      "status": "completed",
+      "steps": [
+        { "id": "P6-S1", "title": "Create templates/result.html", "status": "completed", "details": "Display: Risk Percentage (large, prominent), Risk Level label (Low / Moderate / High), color-coded banner (green/yellow/red), list of flagged XAI risk factors, list of associated conditions." },
+        { "id": "P6-S2", "title": "Dynamic color coding based on risk level", "status": "completed", "details": "Risk < 20% → Green (Low Risk). Risk 20%-50% → Yellow (Moderate Risk). Risk > 50% → Red (High Risk). Change banner, percentage text, and border color dynamically using Jinja2 or JS." },
+        { "id": "P6-S3", "title": "Emergency warning banner", "status": "completed", "details": "If risk > 70%, display a red emergency warning: 'High Cardiovascular Risk Detected — Immediate medical consultation is strongly recommended.'" },
+        { "id": "P6-S4", "title": "Navigation button to recommendations page", "status": "completed", "details": "Add a button: 'View Health Recommendations' that navigates to /recommendations, passing risk data via query parameters or session." }
+      ]
+    },
+    {
+      "id": "P7",
+      "title": "Frontend - Recommendations Page (recommendations.html)",
+      "status": "completed",
+      "steps": [
+        { "id": "P7-S1", "title": "Create templates/recommendations.html", "status": "completed", "details": "Display personalized health recommendations based on risk level and flagged conditions." },
+        { "id": "P7-S2", "title": "Disease information section", "status": "completed", "details": "For each associated condition identified, show: what the disease is, its effects on organs, and prevention methods. Display as expandable cards or tabs." },
+        { "id": "P7-S3", "title": "Low risk maintenance plan section", "status": "completed", "details": "If risk is low, show a Healthy Heart Maintenance Plan: regular exercise, balanced diet, no smoking/alcohol, annual checkups, stress management." },
+        { "id": "P7-S4", "title": "Disclaimer section", "status": "completed", "details": "At the bottom of every result and recommendation page, display: 'This is an AI-generated cardiovascular risk assessment and not a final medical diagnosis. Please consult a licensed doctor for professional medical evaluation.'" },
+        { "id": "P7-S5", "title": "Back/Start Over button", "status": "completed", "details": "Add a button to return to the input form (index.html) to enter new patient data." }
+      ]
+    },
+    {
+      "id": "P8",
+      "title": "Testing & Final Polish",
+      "status": "completed",
+      "steps": [
+        { "id": "P8-S1", "title": "Run train.py and confirm model files generated", "status": "completed", "details": "Check that /models/best_model.pkl, /models/scaler.pkl, and /models/model_info.json are created successfully." },
+        { "id": "P8-S2", "title": "Test full prediction flow end-to-end", "status": "completed", "details": "Enter sample patient data on the form. Verify prediction result, XAI factors, associated conditions, and recommendations all display correctly." },
+        { "id": "P8-S3", "title": "Test input validation", "status": "completed", "details": "Submit empty form, out-of-range values, and invalid inputs. Confirm error messages appear correctly and no crash occurs." },
+        { "id": "P8-S4", "title": "Test edge cases", "status": "completed", "details": "Test with a very low-risk profile and a very high-risk profile. Confirm color coding, emergency banner, and recommendations respond correctly." },
+        { "id": "P8-S5", "title": "Final UI review", "status": "completed", "details": "Check all 3 pages look clean and professional. Confirm no broken links, missing styles, or console errors." }
+      ]
+    }
+  ]
+}

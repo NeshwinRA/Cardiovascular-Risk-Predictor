@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prediction Result</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+    <div class="page-shell">
+        <header class="topbar">
+            <div class="topbar-inner">
+                <div class="brand">
+                    <span class="brand-mark">✦</span>
+                    <div>
+                        <p class="eyebrow">Prediction result</p>
+                        <h1>Cardiovascular Risk Summary</h1>
+                    </div>
+                </div>
+                <div class="topbar-actions">
+                    <a href="{{ url_for('home') }}" class="pill-link">New assessment</a>
+                </div>
+            </div>
+        </header>
+
+        <main class="container">
+            <section class="result-hero card hero-dark">
+                <div>
+                    <span class="section-label section-label-red">Risk assessment</span>
+                    <h2>{{ risk_level }}</h2>
+                    <p>Predicted 10-year cardiovascular risk based on the submitted clinical profile.</p>
+                </div>
+                <div class="risk-panel {{ 'risk-low' if risk_level == 'Low Risk' else 'risk-moderate' if risk_level == 'Moderate Risk' else 'risk-high' }}">
+                    <div class="risk-value">{{ risk_percentage }}%</div>
+                    <span>Estimated heart disease risk</span>
+                </div>
+            </section>
+
+            {% if risk_percentage > 70 %}
+                <section class="alert-card card">
+                    <strong>High risk alert</strong>
+                    <p>Urgent medical consultation is strongly recommended to manage risk factors and protect cardiovascular health.</p>
+                </section>
+            {% endif %}
+
+            <section class="stats-grid">
+                <article class="stat-card">
+                    <span class="stat-label">Risk category</span>
+                    <h3>{{ risk_level }}</h3>
+                    <p>Color-coded status for fast clinical review.</p>
+                </article>
+                <article class="stat-card">
+                    <span class="stat-label">Probability</span>
+                    <h3>{{ risk_percentage }}%</h3>
+                    <p>Calculated from the trained risk model.</p>
+                </article>
+                <article class="stat-card">
+                    <span class="stat-label">Next step</span>
+                    <h3>Review guidance</h3>
+                    <p>Visit the recommendations page for personalized action items.</p>
+                </article>
+            </section>
+
+            <section class="insight-grid">
+                <div class="insight-card card hero-dark insight-card-red">
+                    <h3>Risk drivers</h3>
+                    <ul class="card-list">
+                        {% for flag in flags %}
+                            <li>{{ flag }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="insight-card card hero-dark insight-card-red">
+                    <h3>Associated conditions</h3>
+                    <ul class="card-list">
+                        {% for condition in associations %}
+                            <li>{{ condition }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </section>
+
+            <section class="action-panel card">
+                <div>
+                    <h3>Next steps</h3>
+                    <p>These suggestions help translate your risk score into practical clinical actions.</p>
+                </div>
+                <div class="action-buttons">
+                    <a href="{{ url_for('recommendations') }}" class="primary-btn">View Recommendations</a>
+                    <a href="{{ url_for('home') }}" class="secondary-btn">New Assessment</a>
+                </div>
+            </section>
+
+            <footer class="page-footer">
+                <p>This is an AI-generated cardiovascular risk assessment and not a final medical diagnosis. Please consult a licensed doctor for professional medical evaluation.</p>
+            </footer>
+        </main>
+    </div>
+</body>
+</html>

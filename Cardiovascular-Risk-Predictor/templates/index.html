@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cardiovascular Risk Predictor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+    <div class="page-shell">
+        <header class="topbar">
+            <div class="topbar-inner">
+                <div class="brand">
+                    <span class="brand-mark">✦</span>
+                    <div>
+                        <p class="eyebrow">Cyber-medical platform</p>
+                        <h1>Cardiovascular Risk Predictor</h1>
+                    </div>
+                </div>
+                <div class="topbar-actions">
+                    <span class="pill-link">Live health AI</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="container">
+            <section class="hero-card card hero-dark">
+                <div class="hero-copy">
+                    <span class="section-label section-label-red">Predictive health</span>
+                    <h2>Futuristic cardiovascular risk analysis in one dashboard.</h2>
+                    <p>Submit clinical and lifestyle data to generate a premium grade risk assessment with AI-assisted medical insights.</p>
+                </div>
+            </section>
+
+            <section class="progress-card card hero-dark">
+                <div class="stepper">
+                    <div class="step current"><span>1</span><p>Patient data</p></div>
+                    <div class="step"><span>2</span><p>Prediction</p></div>
+                    <div class="step"><span>3</span><p>Action plan</p></div>
+                </div>
+            </section>
+
+            {% if errors %}
+                <section class="error-panel card">
+                    <div class="error-title">Please fix the highlighted fields</div>
+                    <ul>
+                        {% for error in errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </section>
+            {% endif %}
+
+            <form method="post" action="{{ url_for('predict') }}" class="form-card card hero-dark" novalidate>
+                <div class="form-grid">
+                    <div class="group-card">
+                        <div class="group-header">
+                            <h3>Personal Information</h3>
+                            <p>Demographics used to calibrate risk with precision.</p>
+                        </div>
+                        <div class="field-grid">
+                            <label class="field-label">
+                                <span>Age</span>
+                                <div class="input-wrapper">
+                                    <input type="number" name="age" min="20" max="80" value="{{ form.age if form else '' }}" placeholder="Enter age" />
+                                    <span class="input-icon">🧬</span>
+                                </div>
+                                <small>Years since birth.</small>
+                            </label>
+                            <label class="field-label">
+                                <span>Sex</span>
+                                <div class="input-wrapper">
+                                    <select name="male">
+                                        <option value="">Select sex</option>
+                                        <option value="0" {% if form and form.male == '0' %}selected{% endif %}>Female</option>
+                                        <option value="1" {% if form and form.male == '1' %}selected{% endif %}>Male</option>
+                                    </select>
+                                    <span class="input-icon">⚧</span>
+                                </div>
+                                <small>Important for risk stratification.</small>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="group-card">
+                        <div class="group-header">
+                            <h3>Lifestyle</h3>
+                            <p>Key behavior indicators for cardiovascular risk.</p>
+                        </div>
+                        <div class="field-grid">
+                            <label class="field-label">
+                                <span>Current smoker</span>
+                                <div class="input-wrapper">
+                                    <select name="currentSmoker">
+                                        <option value="">Select</option>
+                                        <option value="0" {% if form and form.currentSmoker == '0' %}selected{% endif %}>No</option>
+                                        <option value="1" {% if form and form.currentSmoker == '1' %}selected{% endif %}>Yes</option>
+                                    </select>
+                                    <span class="input-icon">🚬</span>
+                                </div>
+                                <small>Smoking behavior is a strong risk factor.</small>
+                            </label>
+                            <label class="field-label">
+                                <span>Cigs per day</span>
+                                <div class="input-wrapper">
+                                    <input type="number" name="cigsPerDay" min="0" max="60" value="{{ form.cigsPerDay if form else '' }}" placeholder="0 - 60" />
+                                    <span class="input-icon">📈</span>
+                                </div>
+                                <small>Daily cigarette consumption.</small>
+                            </label>
+                            <label class="field-label">
+                                <span>BP medication</span>
+                                <div class="input-wrapper">
+                                    <select name="BPMeds">
+                                        <option value="">Select</option>
+                                        <option value="0" {% if form and form.BPMeds == '0' %}selected{% endif %}>No</option>
+                                        <option value="1" {% if form and form.BPMeds == '1' %}selected{% endif %}>Yes</option>
+                                    </select>
+                                    <span class="input-icon">💊</span>
+                                </div>
+                                <small>Medication context for blood pressure.</small>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="group-card">
+                        <div class="group-header">
+                            <h3>Medical History</h3>
+                            <p>Pre-existing conditions that change risk strategy.</p>
+                        </div>
+                        <div class="field-grid">
+                            <label class="field-label">
+                                <span>Prior stroke</span>
+                                <div class="input-wrapper">
+                                    <select name="prevalentStroke">
+                                        <option value="">Select</option>
+                                        <option value="0" {% if form and form.prevalentStroke == '0' %}selected{% endif %}>No</option>
+                                        <option value="1" {% if form and form.prevalentStroke == '1' %}selected{% endif %}>Yes</option>
+                                    </select>
+                                    <span class="input-icon">🧠</span>
+                                </div>
+                                <small>Stroke history affects prediction.</small>
+                            </label>
+                            <label class="field-label">
+                                <span>Hypertension</span>
+                                <div class="input-wrapper">
+                                    <select name="prevalentHyp">
+                                        <option value="">Select</option>
+                                        <option value="0" {% if form and form.prevalentHyp == '0' %}selected{% endif %}>No</option>
+                                        <option value="1" {% if form and form.prevalentHyp == '1' %}selected{% endif %}>Yes</option>
+                                    </select>
+                                    <span class="input-icon">❤️‍🩹</span>
+                                </div>
+                                <small>Blood pressure history is critical.</small>
+                            </label>
+                            <label class="field-label">
+                                <span>Diabetes</span>
+                                <div class="input-wrapper">
+                                    <select name="diabetes">
+                                        <option value="">Select</option>
+                                        <option value="0" {% if form and form.diabetes == '0' %}selected{% endif %}>No</option>
+                                        <option value="1" {% if form and form.diabetes == '1' %}selected{% endif %}>Yes</option>
+                                    </select>
+                                    <span class="input-icon">🧪</span>
+                                </div>
+                                <small>Metabolic status influences risk.</small>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="group-card full-width">
+                        <div class="group-header">
+                            <h3>Clinical Measurements</h3>
+                            <p>Vital signs used for the final risk score.</p>
+                        </div>
+                        <div class="field-grid">
+                            <label class="field-label">
+                                <span>Total cholesterol</span>
+                                <div class="input-wrapper">
+                                    <input type="number" name="totChol" min="100" max="400" value="{{ form.totChol if form else '' }}" placeholder="mg/dL" />
+                                    <span class="input-icon">🩺</span>
+                                </div>
+                                <small>Cholesterol reading in mg/dL.</small>
+                            </label>
+                            <label class="field-label">
+                                <span>Systolic BP</span>
+                                <div class="input-wrapper">
+                                    <input type="number" name="sysBP" min="80" max="250" value="{{ form.sysBP if form else '' }}" placeholder="mm Hg" />
+                                    <span class="input-icon">📏</span>
+                                </div>
+                                <small>Maximum arterial pressure.</small>
+                            </label>
+                            <label class="field-label">
+                                <span>Diastolic BP</span>
+                                <div class="input-wrapper">
+                                    <input type="number" name="diaBP" min="50" max="150" value="{{ form.diaBP if form else '' }}" placeholder="mm Hg" />
+                                    <span class="input-icon">📐</span>
+                                </div>
+                                <small>Minimum arterial pressure.</small>
+                            </label>
+                            <label class="field-label">
+                                <span>BMI</span>
+                                <div class="input-wrapper">
+                                    <input type="number" name="BMI" min="10" max="60" step="0.1" value="{{ form.BMI if form else '' }}" placeholder="kg/m²" />
+                                    <span class="input-icon">⚖️</span>
+                                </div>
+                                <small>Body mass index.</small>
+                            </label>
+                            <label class="field-label">
+                                <span>Heart rate</span>
+                                <div class="input-wrapper">
+                                    <input type="number" name="heartRate" min="40" max="150" value="{{ form.heartRate if form else '' }}" placeholder="bpm" />
+                                    <span class="input-icon">💓</span>
+                                </div>
+                                <small>Pulse rate in beats per minute.</small>
+                            </label>
+                            <label class="field-label">
+                                <span>Glucose</span>
+                                <div class="input-wrapper">
+                                    <input type="number" name="glucose" min="50" max="400" value="{{ form.glucose if form else '' }}" placeholder="mg/dL" />
+                                    <span class="input-icon">🍬</span>
+                                </div>
+                                <small>Blood sugar level.</small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-row">
+                    <button type="reset" class="secondary-btn">Reset</button>
+                    <button type="submit" class="primary-btn">Predict Risk</button>
+                </div>
+            </form>
+
+            <div class="loading-overlay" id="loadingOverlay">
+                <div class="loader-card">
+                    <div class="spinner"></div>
+                    <p>Analyzing cardiovascular risk…</p>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
